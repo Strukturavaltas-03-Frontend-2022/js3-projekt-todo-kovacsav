@@ -6,12 +6,45 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>To do list</title>
-  <link rel="stylesheet" href="./style/main.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/font-awesome-4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
 
+  <div class="daily-todo-list">
+    <h3>Daily To-Do list manager</h3>
+    <div class="main__container">
 
+      <div class="date__container">
+        <p class="weekDay"></p>
+        <p class="date"></p>
+      </div>
+
+      <form class="input-todo__container">
+        <input type="text" class="input-todo" placeholder="Take the garbage out">
+        <button type="button" class="plus">+</button>
+      </form>
+
+      <div class="todo-list__container">
+        <p class="todo-list"></p>
+      </div>
+
+      <div class="completed-list__container">
+        <p class="completed-list"></p>
+      </div>
+
+      <div class="button__container">
+        <button class="show-hide">Hide Complete</button>
+        <button class="clearAll">Clear All</button>
+      </div>
+
+      <div class="notodo__container hide">
+        <p class="notodo">👍</p>
+        <p class="rest">Time to chill! You have no todos.</p>
+      </div>
+    </div>
+  </div>
 
   <script src="./js/main.js"></script>
 </body>

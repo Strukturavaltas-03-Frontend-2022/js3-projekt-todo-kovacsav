@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+:root {
+    --baseMargin: 1.5rem;
+}
+html {
+    background-image: linear-gradient(180deg, rgb(251,106,75), rgb(244,92,104));
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    height: 100vh;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    align-items: center;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+}
+
+.daily-todo-list {
+    align-items: center;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+}
+
+h3 {
+    color: rgb(255, 255, 255);
+    font-size: 2rem;
+    margin: 2rem;
+    text-align: center;
+}
+
+.main__container {
+    border: 1px solid rgb(199, 199, 199);
+    border-radius: .3rem;
+    background-color: rgb(242,246,253);
+    color: rgb(100,100,100);
+    display: flex;
+    flex-flow: column wrap;
+    min-height: 28rem;
+    width: 28rem;
+}
+
+.date__container {
+    margin: 3rem 0 2rem 1.5rem;
+}
+
+.weekDay, .date {
+    color:  rgb(209, 110, 103);
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.input-todo__container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    margin: var(--baseMargin);
+}
+
+.input-todo {
+    border: 1px solid rgb(199, 199, 199);
+    border-radius: .2rem;
+    font-size: 1rem;
+    height: 2.5rem;
+    padding: 1rem;
+    width: 20rem;
+}
+
+.input-todo:focus {
+    border: 1px solid rgb(103, 103, 103);
+    border-radius: .2rem;
+}
+
+::placeholder {
+    color:  rgb(200, 200, 200);
+    font-style: italic;
+}
+
+.plus {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    background-color: rgb(220,222,221);
+    border: 1px solid rgb(199, 199, 199);
+    border-radius: .2rem;
+    color: rgb(255,255,255);
+    cursor: pointer;
+    font-size: 1.7rem;
+    font-weight: 800;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    width: 4rem;
+}
+
+.plus:hover {
+    background-color: rgb(103, 103, 103);
+}
+
+.todo-list__container, .completed-list__container {
+    margin: var(--baseMargin);
+}
