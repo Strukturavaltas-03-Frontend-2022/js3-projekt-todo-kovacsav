@@ -106,3 +106,117 @@ h3 {
 .todo-list__container, .completed-list__container {
     margin: var(--baseMargin);
 }
+
+.task {
+    display: flex;
+    align-items: center;
+    background-color: rgb(220, 225, 238);
+    border-radius: .3rem;
+    height: 3rem;
+    line-height: 2.4rem;
+    margin-bottom: .5rem;
+    animation-name: move;
+    animation-duration: 1000ms;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes move {
+    from {margin-left: 80%; opacity: .1}
+    to {margin-left: 0%; opacity: 1}
+}
+
+.checkbox {
+    border: 1px solid rgb(180, 180, 180);
+    height: 1.3rem;
+    margin: .6rem;
+    width: 1.3rem;
+}
+
+.task-text {
+    text-align: left;
+}
+
+.completed-list__container>.task {
+    background-color: rgb(255, 255, 255);
+}
+
+.completed-list__container>.task>.task-text {
+    color:  rgb(180, 180, 180);
+    text-decoration: line-through;
+}
+
+.todo-list__container>p, .completed-list__container>p {
+    margin-bottom: 1rem;
+}
+
+.fa.fa-trash-o {
+    display: none;
+    width: 0;
+    opacity: 0;
+}
+
+.task:hover .fa.fa-trash-o {
+    display: inline;
+    width: 3.5rem;
+    height: 3rem;
+    padding: 0 1rem;
+    margin-left: auto;
+    text-align: center;
+    background-color:  rgb(252, 98, 87);
+    border: none;
+    border-radius: 0 .2rem .2rem 0;
+    color: rgb(255, 255, 255);
+    font-size: 1.3rem;
+    line-height: 3rem;
+    opacity: 1;
+    animation-name: movetrash;
+    animation-duration: 400ms;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes movetrash {
+    from {margin-right: 0%; opacity: .1; width: 1rem;}
+    to {margin-right: 0%; opacity: 1; width: 3.5rem}
+}
+
+.button__container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    background-color: rgb(242,246,253);
+}
+
+.show-hide, .clearAll, .rest {
+    margin: 1rem;
+    margin-bottom: 2rem;
+    background-color: rgb(242,246,253);
+    border: none;
+    color: rgb(100,100,100);
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.notodo__container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    height: 25rem;
+    animation-name: move-toasting;
+    animation-duration: 400ms;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes move-notodo {
+    from {margin-top: 40%; opacity: .1}
+    to {margin-top: 0%; opacity: 1}
+}
+
+.notodo {
+    font-size: 3rem;
+}
+
+.hide {
+    display: none;
+}

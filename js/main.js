@@ -41,16 +41,33 @@ const localStorageHandleObject = {
 };
 
 todoArray = localStorageHandleObject.getItem("activeTodo");
-completedArray = localStorageHandleObject.getItem("completedTodos");
+completedArray = localStorageHandleObject.getItem("completedTodo");
 
-const setNewTodoTemplate = (task) => {
+const setUniqueClassname = (str) => {
+  //string = string.filter((char) => char !== ",");
+  str = str.replaceAll(",", "a");
+  console.log("str: ", str);
+  return str;
+};
+
+const setNewTodoTemplate = (task, string) => {
+  task = setUniqueClassname(task);
   return `<div class="task">
-  <input type="checkbox" class="checkbox" name="task"><label class="task-text" for="task">${task}</label><div class="fa fa-trash-o"></div>
-</div>`;
+  <input type="checkbox" class="checkbox ${
+    "checkbox" + task
+  }" name="task"><label class="task-text" for="task">${task}</label><div class="fa fa-trash-o ${
+    task + string
+  }"></div>
+  </div>`;
 };
 
 const addTemplateToDOM = (className, template) => {
   document.querySelector(className).insertAdjacentHTML("afterend", template);
+};
+
+// Remove todo from DOM
+const removeFromDOM = (element) => {
+  element.parentNode.remove();
 };
 
 const setPendingTodos = (array) => {
@@ -69,20 +86,15 @@ const setCompletedTasks = (array1, array2) => {
       }%`;
 };
 
-const setInitialTodoListToDOM = () => {
-  console.log("setInitialTodoListToDOM");
-  todoArray.forEach((item) => {
-    addTemplateToDOM(".todo-list", setNewTodoTemplate(item));
-    console.log("item");
-  });
-  completedArray.forEach((item) =>
-    addTemplateToDOM(".completed-list", setNewTodoTemplate(item))
-  );
-  setPendingTodos(todoArray);
-  setCompletedTasks(todoArray, completedArray);
-};
+let activeTodoCheckBoxes = document.querySelectorAll(
+  "div.todo-list__container > div.task > .checkbox"
+);
+activeTodoCheckBoxes.forEach((item) => (item.checked = false));
 
-setInitialTodoListToDOM();
+let completedTodoCheckBoxes = document.querySelectorAll(
+  "div.completed-list__container > div.task > .checkbox"
+);
+completedTodoCheckBoxes.forEach((item) => (item.checked = true));
 
 // Add a new todo to an array
 const addTodo = (arr, element) => {
@@ -94,6 +106,139 @@ const clearInputField = () => {
   document.querySelector(".input-todo").value = "";
 };
 
+const removeTodoFromArray = (toDoName) => {
+  todoArray = todoArray.filter(
+    (item, index) => index !== todoArray.findIndex((item) => item === toDoName)
+  );
+};
+
+const removeTodoFromCompletedArray = (toDoName) => {
+  completedArray = completedArray.filter(
+    (item, index) =>
+      index !== completedArray.findIndex((item) => item === toDoName)
+  );
+};
+
+const removeTodoFromLocalStorage = () => {
+  console.log("remove todo");
+  console.log("todoarray: ", todoArray);
+  console.log("completedArray: ", completedArray);
+  // if (activeOrCompleted == "active") {
+  todoArray.length > 0
+    ? localStorageHandleObject.createItem("activeTodo", todoArray)
+    : localStorageHandleObject.removeItem("activeTodo");
+  // } else if (activeOrCompleted == "completed") {
+  completedArray.length > 0
+    ? localStorageHandleObject.createItem("completedTodo", completedArray)
+    : localStorageHandleObject.removeItem("completedTodo");
+  //}
+};
+
+const removeTodoItem = (uniqueClassName) => {
+  const todoTrash = document.querySelector("." + uniqueClassName);
+  const label = todoTrash.previousSibling.textContent;
+  console.log("todoTrash: ", todoTrash);
+  console.log("label: ", label);
+
+  removeFromDOM(todoTrash);
+
+  removeTodoFromArray(label);
+  removeTodoFromCompletedArray(label);
+
+  removeTodoFromLocalStorage();
+
+  setPendingTodos(todoArray);
+  setCompletedTasks(todoArray, completedArray);
+
+  //emptyTodoList();
+};
+
+const setInitialTodoListToDOM = () => {
+  console.log("setInitialTodoListToDOM");
+  todoArray.forEach((item) => {
+    addTemplateToDOM(".todo-list", setNewTodoTemplate(item, "active"));
+    //console.log("item");
+    // rárakjuk a kuka ikonra (aminek egyedi class-a a feladat szövege + active) az
+    // eseményfigyelőt a törléshez
+    document
+      .querySelector("." + setUniqueClassname(item) + "active")
+      .addEventListener("click", () =>
+        removeTodoItem(setUniqueClassname(item) + "active")
+      );
+    // rárakjuk az eseményfigyelőt a completed státuszba való áttevéshez a
+    // checkboxra
+    console.log("selected checkbox: ", ".checkbox" + setUniqueClassname(item));
+    document
+      .querySelector(".checkbox" + setUniqueClassname(item))
+      .addEventListener("change", (ev) => {
+        if (ev.target.checked) {
+          taskDone(".checkbox" + setUniqueClassname(item));
+        }
+      });
+  });
+  completedArray.forEach((item) => {
+    addTemplateToDOM(".completed-list", setNewTodoTemplate(item, "completed"));
+    // rárakjuk a kuka ikonra (aminek egyedi class-a a feladat szövege + completed) az
+    // eseményfigyelőt a törléshez
+    document
+      .querySelector("." + setUniqueClassname(item) + "completed")
+      .addEventListener("click", () =>
+        removeTodoItem(setUniqueClassname(item) + "completed")
+      );
+  });
+
+  setPendingTodos(todoArray);
+  setCompletedTasks(todoArray, completedArray);
+};
+
+const taskDone = (uniqueClassName) => {
+  let checkBox = document.querySelector(uniqueClassName);
+  console.log("activeTodoCheckBox: ", checkBox);
+  const label = checkBox.nextSibling.textContent;
+  removeFromDOM(checkBox);
+  const findItem = todoArray.find((item) => item === label);
+
+  addTemplateToDOM(
+    ".completed-list",
+    setNewTodoTemplate(findItem, "completed")
+  );
+
+  // set the new arrays
+  completedArray = completedArray.concat(findItem);
+
+  removeTodoFromCompletedArray(label);
+
+  // rárakjuk a kuka ikonra (aminek egyedi class-a a feladat szövege + completed) az
+  // eseményfigyelőt a törléshez
+  document
+    .querySelector("." + label + "completed")
+    .addEventListener("click", () => removeTodoItem(label + "completed"));
+
+  //console.log("completedArray: ", completedArray);
+  //console.log("todoArray: ", todoArray);
+
+  // overwrite the database with the new arrays
+  removeTodoFromLocalStorage();
+  removeTodoFromLocalStorage();
+
+  setPendingTodos(todoArray);
+  setCompletedTasks(todoArray, completedArray);
+  activeTodoCheckBoxes = document.querySelectorAll(
+    "div.todo-list__container > div.task > .checkbox"
+  );
+  activeTodoCheckBoxes.forEach((item) => (item.checked = false));
+
+  completedTodoCheckBoxes = document.querySelectorAll(
+    "div.completed-list__container > div.task > .checkbox"
+  );
+  completedTodoCheckBoxes.forEach((item) => (item.checked = true));
+
+  //clearCompletedItem();
+  //clearTodoItem();
+  //emptyTodoList();
+  return activeTodoCheckBoxes, completedTodoCheckBoxes;
+};
+
 // Add new todo to the todo list
 const addNewTodo = () => {
   document.querySelector(".plus").addEventListener("click", () => {
@@ -103,11 +248,40 @@ const addNewTodo = () => {
       addTodo(todoArray, input);
       //todoArray.forEach((item, index) => setNewTodoTemplate(item));
       localStorageHandleObject.createItem("activeTodo", todoArray);
-      addTemplateToDOM(".todo-list", setNewTodoTemplate(todoArray[0]));
+
+      addTemplateToDOM(
+        ".todo-list",
+        setNewTodoTemplate(todoArray[0], "active")
+      );
+      console.log("todoArray[0]: ", todoArray[0]);
+      // rárakjuk a kuka ikonra (aminek egyedi class-a a feladat szövege + active) az
+      // eseményfigyelőt a törléshez
+      document
+        .querySelector("." + setUniqueClassname(todoArray[0]) + "active")
+        .addEventListener("click", () =>
+          removeTodoItem(setUniqueClassname(todoArray[0]) + "active")
+        );
+
+      // rárakjuk az eseményfigyelőt a completed státuszba való áttevéshez a
+      // checkboxra
+      console.log(
+        "selected checkbox: ",
+        ".checkbox" + setUniqueClassname(todoArray[0])
+      );
+      document
+        .querySelector(".checkbox" + setUniqueClassname(todoArray[0]))
+        .addEventListener("change", (ev) => {
+          if (ev.target.checked) {
+            taskDone(".checkbox" + setUniqueClassname(todoArray[0]));
+          }
+        });
+
       clearInputField();
-      //pendingItems(todoArray);
-      //completedTasks(todoArray, completedArray);
-      //todoCheckboxes = todoContainer.querySelectorAll(".checkbox");
+      setPendingTodos(todoArray);
+      setCompletedTasks(todoArray, completedArray);
+      activeTodoCheckBoxes = document.querySelectorAll(
+        "div.todo-list__container > div.task > .checkbox"
+      );
       //pendingToCompleted();
       //clearCompletedItem();
       //clearTodoItem();
@@ -117,4 +291,64 @@ const addNewTodo = () => {
   });
 };
 
+/*
+// Add todo from the todo list to the completed list
+const taskDone = () => {
+  activeTodoCheckBoxes = document.querySelectorAll(
+    "div.todo-list__container > div.task > .checkbox"
+  );
+  console.log("activeTodoCheckBoxes: ", activeTodoCheckBoxes);
+  activeTodoCheckBoxes.forEach((checkbox, index) =>
+    checkbox.addEventListener("change", (ev) => {
+      if (ev.target.checked) {
+        const label = checkbox.nextSibling.textContent;
+        removeFromDOM(checkbox);
+
+        const findItem = todoArray.find((item) => item === label);
+
+        addTemplateToDOM(
+          ".completed-list",
+          setNewTodoTemplate(findItem, "completed")
+        );
+
+        // set the new arrays
+        completedArray = completedArray.concat(findItem);
+
+        removeTodoFromArray(label);
+
+        // rárakjuk a kuka ikonra (aminek egyedi class-a a feladat szövege + completed) az
+        // eseményfigyelőt a törléshez
+        document
+          .querySelector("." + label + "completed")
+          .addEventListener("click", () => removeTodoItem(label + "completed"));
+
+        //console.log("completedArray: ", completedArray);
+        //console.log("todoArray: ", todoArray);
+
+        // overwrite the database with the new arrays
+        removeTodoFromLocalStorage();
+        removeTodoFromLocalStorage();
+
+        setPendingTodos(todoArray);
+        setCompletedTasks(todoArray, completedArray);
+        activeTodoCheckBoxes = document.querySelectorAll(
+          "div.todo-list__container > div.task > .checkbox"
+        );
+
+        completedTodoCheckBoxes = document.querySelectorAll(
+          "div.completed-list__container > div.task > .checkbox"
+        );
+        completedTodoCheckBoxes.forEach((item) => (item.checked = true));
+
+        //clearCompletedItem();
+        //clearTodoItem();
+        //emptyTodoList();
+        return activeTodoCheckBoxes, completedTodoCheckBoxes;
+      }
+    })
+  );
+};
+*/
+
+setInitialTodoListToDOM();
 addNewTodo();
