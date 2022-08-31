@@ -44,19 +44,24 @@ todoArray = localStorageHandleObject.getItem("activeTodo");
 completedArray = localStorageHandleObject.getItem("completedTodo");
 
 const setUniqueClassname = (str) => {
-  //string = string.filter((char) => char !== ",");
-  str = str.replaceAll(",", "a");
+  // a gondot az okozza, hogy egyedi classname kellene, de a user bármit megadhat
+  // az input mezőben, olyan karaktereket is, ami nem használható classname-nek
+  const pattern = /[a-zA-Z]/;
+  str =
+    (str[0].match(pattern) ? str[0] : "a") +
+    str.length +
+    (str[str.length - 2].match(pattern) ? str[str.length - 2] : "b");
   console.log("str: ", str);
   return str;
 };
 
 const setNewTodoTemplate = (task, string) => {
-  task = setUniqueClassname(task);
+  let task1 = setUniqueClassname(task);
   return `<div class="task">
   <input type="checkbox" class="checkbox ${
-    "checkbox" + task
+    "checkbox" + task1
   }" name="task"><label class="task-text" for="task">${task}</label><div class="fa fa-trash-o ${
-    task + string
+    task1 + string
   }"></div>
   </div>`;
 };
@@ -208,14 +213,17 @@ const taskDone = (uniqueClassName) => {
 
   removeTodoFromCompletedArray(label);
 
+  console.log("label: ", label);
   // rárakjuk a kuka ikonra (aminek egyedi class-a a feladat szövege + completed) az
   // eseményfigyelőt a törléshez
   document
-    .querySelector("." + label + "completed")
-    .addEventListener("click", () => removeTodoItem(label + "completed"));
+    .querySelector("." + setUniqueClassname(label) + "completed")
+    .addEventListener("click", () =>
+      removeTodoItem(setUniqueClassname(label) + "completed")
+    );
 
-  //console.log("completedArray: ", completedArray);
-  //console.log("todoArray: ", todoArray);
+  console.log("completedArray: ", completedArray);
+  console.log("todoArray: ", todoArray);
 
   // overwrite the database with the new arrays
   removeTodoFromLocalStorage();
