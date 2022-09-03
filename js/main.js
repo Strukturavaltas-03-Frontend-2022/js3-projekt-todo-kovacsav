@@ -3,6 +3,9 @@
 let todoArray = []; // aktív feladatok
 let completedArray = []; // befejezett feladatok
 
+let activeTodoCheckBoxes;
+let completedTodoCheckBoxes;
+
 // A dátum beállítása
 (function setDate() {
   const weekDays = [
@@ -79,20 +82,34 @@ const removeFromDOM = (element) => {
   element.parentNode.remove();
 };
 
+// Hide class hozzáadása
+const addClassHide = (className) => {
+  document.querySelector(className).classList.add("hide");
+};
+
+// Hide class levétele
+const removeClassHide = (className) => {
+  document.querySelector(className).classList.remove("hide");
+};
+
 // a függőben lévő tennivalók számának beállítása
 // ezzel egyidőben a notodo containerről a hide class levétele, visszarakása
-// ezzel ellentétesen mozog a button container hide classa
+// ezzel ellentétesen mozog a button és a két todo lista containereinek hide classa
 const setPendingTodos = (array) => {
   const pendingTodo = document.querySelector(".pending-items");
   pendingTodo.textContent = `You have ${array.length} pending items`;
-  if (todoArray.length === 0) {
-    document.querySelector(".notodo__container").classList.remove("hide");
-    document.querySelector(".button__container").classList.add("hide");
+  if (todoArray.length === 0 && completedArray.length === 0) {
+    removeClassHide(".notodo__container");
+    addClassHide(".button__container");
+    addClassHide(".todo-list__container");
+    addClassHide(".completed-list__container");
   } else if (
     !document.querySelector(".notodo__container").classList.contains("hide")
   ) {
-    document.querySelector(".notodo__container").classList.add("hide");
-    document.querySelector(".button__container").classList.remove("hide");
+    addClassHide(".notodo__container");
+    removeClassHide(".button__container");
+    removeClassHide(".todo-list__container");
+    removeClassHide(".completed-list__container");
   }
 };
 
@@ -110,12 +127,12 @@ const setCompletedTasks = (array1, array2) => {
 
 // Aktív és elvégzett teendők checkboxának alapbeállítása
 const setCheckbox = () => {
-  let activeTodoCheckBoxes = document.querySelectorAll(
+  activeTodoCheckBoxes = document.querySelectorAll(
     "div.todo-list__container > div.task > .checkbox"
   );
   activeTodoCheckBoxes.forEach((item) => (item.checked = false));
 
-  let completedTodoCheckBoxes = document.querySelectorAll(
+  completedTodoCheckBoxes = document.querySelectorAll(
     "div.completed-list__container > div.task > .checkbox"
   );
   completedTodoCheckBoxes.forEach((item) => (item.checked = true));
@@ -180,8 +197,6 @@ const setInitialTodoListToDOM = () => {
   todoArray.forEach((item) => {
     addTemplateToDOM(".todo-list", setNewTodoTemplate(item, "active"));
 
-    setCheckbox();
-
     // rárakjuk a kuka ikonra (aminek egyedi class-a a feladat szövege + active) az
     // eseményfigyelőt a törléshez
     document
@@ -199,11 +214,6 @@ const setInitialTodoListToDOM = () => {
           taskDone(".checkbox" + setUniqueClassname(item));
         }
       });
-
-    // letiltjuk a checkbox-ra való kattintást
-    document
-      .querySelectorAll("div.completed-list__container > div.task > .checkbox")
-      .forEach((item) => (item.disabled = true));
   });
 
   completedArray.forEach((item) => {
@@ -217,6 +227,13 @@ const setInitialTodoListToDOM = () => {
         removeTodoItem(setUniqueClassname(item) + "completed")
       );
   });
+
+  setCheckbox();
+
+  // letiltjuk a checkbox-ra való kattintást
+  document
+    .querySelectorAll("div.completed-list__container > div.task > .checkbox")
+    .forEach((item) => (item.disabled = true));
 
   setPendingTodos(todoArray);
   setCompletedTasks(todoArray, completedArray);
@@ -260,6 +277,7 @@ const taskDone = (uniqueClassName) => {
 
   setPendingTodos(todoArray);
   setCompletedTasks(todoArray, completedArray);
+  setCheckbox();
 
   activeTodoCheckBoxes = document.querySelectorAll(
     "div.todo-list__container > div.task > .checkbox"
