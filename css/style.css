@@ -1,13 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
-:root {
-    --baseMargin: 1.5rem;
-}
+
 html {
     background-image: linear-gradient(180deg, rgb(251,106,75), rgb(244,92,104));
+    /*background-color: beige;*/
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 * {
@@ -45,10 +44,11 @@ h3 {
     flex-flow: column wrap;
     min-height: 28rem;
     width: 28rem;
+    margin-bottom: 10%;
 }
 
 .date__container {
-    margin: 3rem 0 2rem 1.5rem;
+    margin: 1rem 0 1rem 1.5rem;
 }
 
 .weekDay, .date {
@@ -61,7 +61,7 @@ h3 {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
-    margin: var(--baseMargin);
+    margin: 1rem;
 }
 
 .input-todo {
@@ -104,7 +104,7 @@ h3 {
 }
 
 .todo-list__container, .completed-list__container {
-    margin: var(--baseMargin);
+    margin: 1rem;
 }
 
 .task {
@@ -115,13 +115,13 @@ h3 {
     height: 3rem;
     line-height: 2.4rem;
     margin-bottom: .5rem;
-    animation-name: move;
-    animation-duration: 1000ms;
+    animation-name: ease_from_left;
+    animation-duration: 1500ms;
     animation-timing-function: ease-in-out;
 }
 
-@keyframes move {
-    from {margin-left: 80%; opacity: .1}
+@keyframes ease_from_left {
+    from {margin-left: 100%; opacity: 0}
     to {margin-left: 0%; opacity: 1}
 }
 
@@ -169,13 +169,13 @@ h3 {
     font-size: 1.3rem;
     line-height: 3rem;
     opacity: 1;
-    animation-name: movetrash;
-    animation-duration: 400ms;
+    animation-name: ease_trash;
+    animation-duration: 500ms;
     animation-timing-function: ease-in-out;
 }
 
-@keyframes movetrash {
-    from {margin-right: 0%; opacity: .1; width: 1rem;}
+@keyframes ease_trash {
+    from {margin-right: 0%; opacity: 0; width: 1rem;}
     to {margin-right: 0%; opacity: 1; width: 3.5rem}
 }
 
@@ -202,15 +202,15 @@ h3 {
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    height: 25rem;
-    animation-name: move-toasting;
-    animation-duration: 400ms;
+    /*height: 25rem;*/
+    animation-name: ease_notodo;
+    animation-duration: 1000ms;
     animation-timing-function: ease-in-out;
 }
 
-@keyframes move-notodo {
-    from {margin-top: 40%; opacity: .1}
-    to {margin-top: 0%; opacity: 1}
+@keyframes ease_notodo {
+    from {opacity: 0}
+    to {opacity: 1}
 }
 
 .notodo {
